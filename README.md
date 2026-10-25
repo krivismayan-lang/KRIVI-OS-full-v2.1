@@ -23,7 +23,7 @@ Raspberry Pi + USB cable	The "Pi Link" apps (monitor, console, trackpad, shutdow
 HC‑SR04 ultrasonic sensor	The Ultrasonic Range app
 A second ESP32 running KRIVI	ESP‑NOW Radio peer messaging
 
-The CYD has a built‑in screen, touch, speaker, microphone, SD slot and RGB LED — so for the core experience the board + a FAT32 SD card + a USB cable is everything you need.
+The CYD has a built‑in screen, touch, SD slot and RGB LED — so for the core experience the board + a FAT32 SD card with at least 8GB or more + a USB cable is everything you need.
 
 2. Quick start — set it up in order
 
