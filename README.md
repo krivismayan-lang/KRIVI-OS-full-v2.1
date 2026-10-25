@@ -1,5 +1,5 @@
 KRIVI OS
-
+Made by 11 year old with care👌😏😎👍
 A touch‑driven micro‑operating‑system for the ESP32‑2432S028 "Cheap Yellow Display" (CYD) — a tiny 320×240 touchscreen computer that boots straight into a desktop launcher and runs 50+ self‑contained apps: games and emulators, audio tools, utilities, radio/wireless labs, graphics demos, and system tools.
 
 Current version: 1.7.2-arcade
@@ -260,3 +260,5 @@ Flashing won't start → use a data USB cable, try a lower --baud (e.g. 460800),
 1.6.2 — major RAM pass: strip rendering for Flappy/Dice, trimmed decoder/media buffers.
 
 KRIVI OS runs entirely on the device — it needs no companion app. Everything above is on the 320×240 touchscreen in your hand.
+NOTE IMPORTANT!
+If you open a app and it says need_ ram and you have _ ram , just restart your CYD and then it should work.
