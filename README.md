@@ -262,5 +262,7 @@ Flashing won't start → use a data USB cable, try a lower --baud (e.g. 460800),
 1.6.2 — major RAM pass: strip rendering for Flappy/Dice, trimmed decoder/media buffers.
 
 KRIVI OS runs entirely on the device — it needs no companion app. Everything above is on the 320×240 touchscreen in your hand.
+
 ‼️NOTE IMPORTANT‼️
+
 If you open a app and it says need_ ram and you have _ ram , just restart your CYD and then it should work.
