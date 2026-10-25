@@ -1,5 +1,6 @@
 KRIVI OS
 Made by 11 year old with care👌😏😎👍
+
 A touch‑driven micro‑operating‑system for the ESP32‑2432S028 "Cheap Yellow Display" (CYD) — a tiny 320×240 touchscreen computer that boots straight into a desktop launcher and runs 50+ self‑contained apps: games and emulators, audio tools, utilities, radio/wireless labs, graphics demos, and system tools.
 
 Current version: 1.7.2-arcade
