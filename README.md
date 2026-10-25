@@ -4,7 +4,73 @@ A touch‑driven micro‑operating‑system for the ESP32‑2432S028 "Cheap Yell
 
 Current version: 1.7.2-arcade
 
-1. What it runs on
+1. What you need (materials)
+
+Required
+
+Item	Notes
+ESP32‑2432S028 "CYD" board	The "Cheap Yellow Display." Get the ILI9341 panel version (most common). A few boards ship with an ST7789 panel — there's a separate _ST7789 image for those.
+microSD card — more than 8 GB	16 GB is ideal. Must be formatted FAT32 (cards over 32 GB are often exFAT out of the box — reformat them to FAT32). This holds games, music, movies, icons and settings.
+USB data cable	Matches your board's port (usually micro‑USB or USB‑C). Must be a data cable, not charge‑only — you flash and power the board over it.
+A computer	Windows, macOS or Linux, to flash the firmware (esptool or the Arduino IDE).
+
+Optional (only for certain apps)
+
+Item	Enables
+Wired/USB headphones or a powered speaker	n/a — audio is the on‑board speaker; no extra parts needed
+A WiFi network (2.4 GHz)	Weather, World Clock/NTP, ISS Globe, the wireless‑lab apps
+Raspberry Pi + USB cable	The "Pi Link" apps (monitor, console, trackpad, shutdown)
+HC‑SR04 ultrasonic sensor	The Ultrasonic Range app
+A second ESP32 running KRIVI	ESP‑NOW Radio peer messaging
+
+The CYD has a built‑in screen, touch, speaker, microphone, SD slot and RGB LED — so for the core experience the board + a FAT32 SD card + a USB cable is everything you need.
+
+2. Quick start — set it up in order
+
+Do these in this order: prepare the card, flash the firmware, insert the card, power on.
+
+Step 1 — Format the SD card (FAT32)
+
+Format your microSD card as FAT32. (On Windows use the built‑in formatter for ≤32 GB cards, or a tool like "guiformat"/"SD Card Formatter" for larger ones; on macOS use Disk Utility → MS‑DOS (FAT); on Linux mkfs.vfat -F 32.)
+
+Step 2 — Put the KRIVI files on the card
+
+Copy the contents of the project's sd_card/ folder onto the root of the card, so you end up with this layout:
+
+/roms/            NES (.nes) and CHIP-8 (.ch8) ROMs      (add your own)
+/music/           your .mp3 files                         (add your own)
+/data/movies/     converted .avi (MP4 → AVI) clips        (add your own)
+/data/video/      raw .mjpeg clips                         (add your own)
+/icons/           launcher + weather icons                (from sd_card/)
+/sys/             settings + app manifests                (from sd_card/)
+
+At minimum copy /icons/ and /sys/ from sd_card/. The /roms, /music, /data folders can start empty — add your own games, songs and videos later. Use tools/convert_media.py to turn an MP4 into a KRIVI‑playable .avi.
+
+Step 3 — Flash the firmware
+
+Connect the board to your computer with the USB cable, then flash the pre‑built image from the project's prebuilt/ folder to offset 0x0:
+
+bash
+esptool.py --chip esp32 --baud 921600 write_flash 0x0 prebuilt/KRIVI_OS_v1.7.2-arcade_ILI9341.bin
+No esptool? Install it with pip install esptool.
+On Windows the port is like COM5; on macOS/Linux like /dev/ttyUSB0 — add --port <that> if esptool doesn't auto‑detect.
+If flashing fails to start, hold the BOOT button while it connects.
+ST7789‑panel board? Use the _ST7789 image instead.
+Step 4 — Insert the card and power on
+
+Put the microSD card into the board's slot, then power the board (USB is fine). KRIVI boots through its splash sequence and lands on the desktop launcher.
+
+Step 5 — First‑run settings
+
+Go to page 6 → System Settings and set:
+
+Brightness and Volume (drag the bars)
+WiFi (tap SET WIFI, enter your 2.4 GHz network — enables Weather, clock sync, ISS, etc.)
+Tap SAVE (writes /sys/settings.json to the card) — then SYNC NTP to set the clock.
+
+You're done. Tap any tile to launch an app; tap EXIT (top‑right) to come back.
+
+3. What it runs on
 	
 Board	ESP32‑2432S028 ("CYD" — Cheap Yellow Display)
 CPU	ESP32 (dual‑core Xtensa @ 240 MHz), no PSRAM
@@ -14,12 +80,12 @@ Display	2.8" ILI9341, 320×240, landscape, locked
 Touch	XPT2046 resistive (bit‑banged soft‑SPI)
 Audio out	Mono speaker on GPIO26 (built‑in DAC via I²S)
 Mic	Analog mic on GPIO35
-Storage	microSD on the VSPI bus (a 16 GB card works well)
+Storage	microSD on the VSPI bus
 Extras	RGB status LED (active‑low), light relay, NTP clock over WiFi
 
-There is no PSRAM, so usable working memory is small. A large part of KRIVI OS's design is keeping each app inside that budget — see §6 Memory.
+There is no PSRAM, so usable working memory is small. A large part of KRIVI OS's design is keeping each app inside that budget — see §7 Memory.
 
-2. Booting & the launcher
+4. Booting & the launcher
 
 On power‑up KRIVI runs a short boot sequence (hardware init, SD mount, settings load, optional NTP time sync) and lands on the desktop launcher.
 
@@ -38,11 +104,11 @@ Utilities & Time
 Pi Link & Radio
 Graphics & Sandbox
 Wireless Lab & System
-3. The apps
+5. The apps
 Page 1 — Gaming & Emulation
 App	What it does
 NES Emulator	Plays .nes ROMs from /roms (mappers NROM/MMC1/UxROM/CNROM/MMC3). The whole ROM loads into RAM, so with no PSRAM only games up to ~180 KB fit (SMB3 is too big).
-Arcade	A single menu of 10 classic games — see §4.
+Arcade	A single menu of 10 classic games — see §6.
 CHIP‑8 Virtual Machine	Runs classic CHIP‑8 .ch8 programs from /roms.
 Page 2 — Audio & Sensors
 App	What it does
@@ -85,7 +151,7 @@ Sketchpad	Finger‑paint canvas.
 3D Rainbow Warp	Rotating 3D graphics demo.
 Falling Sand	Cellular‑automaton sand/physics sandbox.
 Mandelbrot	Pinch/tap to zoom the Mandelbrot set.
-Video & MP4 Player	Plays converted .avi (MJPEG) and raw .mjpeg clips from SD, with audio. Decodes straight from the SD card when RAM is tight (see §6).
+Video & MP4 Player	Plays converted .avi (MJPEG) and raw .mjpeg clips from SD, with audio. Decodes straight from the SD card when RAM is tight (see §7).
 Virtual Pet	A little on‑screen pet to care for.
 Touch Diagnostics	Touch calibration / test screen.
 System Manual	On‑device help.
@@ -104,7 +170,7 @@ System Settings	Brightness, volume, WiFi, clock, save/reboot.
 NVS Flash Editor	Inspect/edit stored key‑value settings (advanced).
 Desk Clock	Full‑screen clock.
 Noise Floor Log	Logs ambient noise over time.
-4. The Arcade
+6. The Arcade
 
 The Arcade (on the Gaming page) is one scrollable menu that holds 10 classic games. Tap one to play, tap EXIT to return to the list. The games that live here are not duplicated as separate tiles on the home grid.
 
@@ -121,10 +187,7 @@ Snakes & Ladders — 2–4 player pass‑and‑play, climb and slide on a 1–10
 
 Ludo and Snakes & Ladders are new and draw directly to the screen (no frame buffer), so they use almost no RAM.
 
-5. SD card layout
-
-KRIVI uses the microSD card for everything that doesn't belong in flash. Suggested layout:
-
+7. SD card layout (reference)
 /roms/            NES (.nes) and CHIP-8 (.ch8) ROMs
 /music/           .mp3 files for the MP3 player
 /data/movies/     converted .avi (MP4 → AVI/MJPEG) clips
@@ -136,9 +199,9 @@ KRIVI uses the microSD card for everything that doesn't belong in flash. Suggest
    apps/app_NN.json   optional per-app parameter manifests
    swap.bin       temporary SD-as-RAM scratch file (auto-managed)
 
-Media is prepared with the tools/convert_media.py helper included in the project. Settings are written automatically from System Settings → Save.
+Media is prepared with the tools/convert_media.py helper in the project. Settings are written automatically from System Settings → Save.
 
-6. Memory — how KRIVI stays inside a tiny RAM budget
+8. Memory — how KRIVI stays inside a tiny RAM budget
 
 The ESP32 here has ~320 KB of SRAM and no PSRAM, so the challenge is never total storage (flash is plentiful, the SD card huge) — it's fitting an app's working buffers into the small pool of RAM, specifically the largest single contiguous block available at the moment.
 
@@ -151,18 +214,10 @@ Graceful allocation. Large allocations retry once after a brief yield (bigAlloc)
 
 The honest limit: the SD card can only help buffers that are read/written in blocks. Data that's touched per‑pixel every frame (a live game frame buffer, the Falling‑Sand grid, a NES ROM) must stay in RAM — the SD card is far too slow for that. For those, the fix is keeping the buffer small (strip rendering), not swapping to SD.
 
-7. Flashing a pre‑built image
+9. Building from source (Arduino IDE / arduino‑cli)
 
-The prebuilt/ folder contains a ready‑to‑flash merged image (bootloader + partition table + app in one file), e.g. KRIVI_OS_v1.7.2-arcade_ILI9341.bin.
+Most people just flash the pre‑built image (Step 3 above). To build it yourself:
 
-Flash it to offset 0x0 with esptool:
-
-bash
-esptool.py --chip esp32 --baud 921600 write_flash 0x0 KRIVI_OS_v1.7.2-arcade_ILI9341.bin
-
-(The _ILI9341 image is for the common ILI9341 panel; a _ST7789 variant exists for boards with that panel.)
-
-8. Building from source (Arduino IDE / arduino‑cli)
 Board core: ESP32 Arduino 2.0.17 (3.x removed the built‑in‑DAC I²S mode this project relies on).
 Board / FQBN: espressif:esp32:esp32 with PartitionScheme=huge_app, FlashMode=qio, CPUFreq=240, FlashSize=4M.
 Libraries required:
@@ -175,7 +230,7 @@ The MP3 decoder (Helix) is bundled in‑tree under KriviOS/src/helix/ — no lib
 
 Open KriviOS/KriviOS.ino, select the board/partition settings above, and compile. A current build is about 70% of flash and 29% static RAM, leaving ~230 KB of heap for apps.
 
-9. Project layout
+10. Project layout
 KRIVI_OS/
   KriviOS/              the Arduino sketch (all source)
     KriviOS.ino         entry point (setup/loop)
@@ -189,10 +244,16 @@ KRIVI_OS/
     app_arcade.cpp      the Arcade hub + Ludo + Snakes & Ladders
     src/helix/          bundled Helix MP3 decoder
   prebuilt/             ready-to-flash .bin images
-  sd_card/              example files to copy onto the microSD card
+  sd_card/              files to copy onto the microSD card
   tools/                media converter, Pi bridge, etc.
   TFT_eSPI_User_Setup.h display pin configuration
-10. Version highlights
+11. Troubleshooting
+Blank/garbled screen after flashing → your board may use the ST7789 panel; flash the _ST7789 image.
+"NO SD CARD" or apps can't find files → card isn't FAT32, isn't seated, or the folders in Step 2 aren't at the card's root.
+Weather / clock / ISS don't work → set WiFi in System Settings (2.4 GHz only) and SYNC NTP.
+An app says "Not enough RAM" → it needs a bigger contiguous block than is free right now; reboot to defragment, or (for video) it will fall back to playing from SD automatically.
+Flashing won't start → use a data USB cable, try a lower --baud (e.g. 460800), and hold BOOT while connecting.
+12. Version highlights
 1.7.2 — removed duplicate game tiles from the home grid (they live in Arcade now); fixed the clipped Arcade UP/DOWN buttons.
 1.7.1 — SD‑card RAM helper: video decodes straight from SD when RAM is low; added the SwapBuf facility and retrying allocations.
 1.7.0 — new Arcade games hub with 10 classics, including new Ludo and Snakes & Ladders (2–4 player).
