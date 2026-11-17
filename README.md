@@ -228,7 +228,7 @@ Flashing won't start → use a data cable, a lower --baud (e.g. 460800), and hol
 1.9.0–1.9.3 — AI Assistant (Gemini), icons for every app, Maps tile fixes.
 1.8.1 — New Maps app (Google-style map via CARTO Voyager: search, car/bike/walk routes with turn list, favourites, IP location, online + offline tiles, selectable map style).
 1.8.0 — Media & Sensors page (Bluetooth + MP3, Internet Radio, Light Meter, Auto‑Brightness, Night Light); removed the old audio/decibel apps; Arcade expanded to 16 games (added 2048, Connect Four, Checkers, Reversi, Simon, Sudoku, Solitaire, Space Invaders; removed Ludo & Snakes & Ladders); Falling Sand → Sandbox with 33 materials and a tabbed picker; redrawn Virtual Pet; WiFi open + school/enterprise support; device password lock; OTA Update app.
-1.7.x — Arcade games hub; SD‑card RAM helper (video‑from‑SD, SwapBuf); duplicate‑tile cleanup.
+1.7.x — Arcade games hub; SD‑card RAM helper (video‑from‑SD, SwapBuf); duplicate‑tile cleanup. 
 1.6.2 — major RAM pass: strip rendering, trimmed decoder/media buffers.
 
 KRIVI OS runs entirely on the device — no companion app. Everything above is on the 320×240 touchscreen in your hand.
